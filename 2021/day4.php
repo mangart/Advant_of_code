@@ -47,10 +47,16 @@ function preveri_matrike($matrike){
 	return false;
 }
 
-function preveri_metrike1($matrike,&$markirane,&$stevec){
+function preveri_matrike1($matrike,&$zmagovalne,&$zadnja,$bingo){
 	for($i = 0;$i < count($matrike);$i++){
 		if(preveri_matriko($matrike[$i])){
-			if(!isset($markirane
+			if(!isset($zmagovalne[$i])){
+				$zmagovalne[$i]['matrika'] = $matrike[$i];
+				$zmagovalne[$i]['bingo'] = $bingo;
+				$zadnja['matrika'] = $matrike[$i];
+				$zadnja['indeks'] = $i;
+				$zadnja['bingo'] = $bingo;
+			}
 		}
 	}
 }
@@ -96,6 +102,7 @@ function preveri_stolpec($matrika,$j){
 function part2($bingo,$matrike){
 	$oznacene = inicializiraj_oznacene($matrike);
 	$zmagovalne_matrike = array();
+	$zadnja = array();
 	foreach($bingo as $bin){
 		for($i = 0;$i < count($matrike);$i++){
 			for($j = 0;$j < count($matrike[$i]);$j++){
@@ -106,15 +113,19 @@ function part2($bingo,$matrike){
 				}
 			}
 		}
-		$mat = preveri_matrike($oznacene);
-		$vsota = 0;
-		if($mat){
-			if(!isset($zmagovalne_matrike[$mat])){
-				$zmagovalne_matrike[$ma
-			return $vsota * $bin;
+		preveri_matrike1($oznacene,$zmagovalne_matrike,$zadnja,$bin);
+	}
+	$vsota = 0;
+	$zmagovalna_matrika = $matrike[$zadnja['indeks']];
+	for($i = 0;$i < count($zmagovalna_matrika);$i++){
+		for($j = 0;$j < count($zmagovalna_matrika[$i]);$j++){
+			if(!$zadnja['matrika'][$i][$j]){
+				$vsota = $vsota + $zmagovalna_matrika[$i][$j];
 			}
 		}
 	}
+	return $vsota * $zadnja['bingo'];
+	
 }
 
 $vsebina = explode("\n",file_get_contents("input_day4.txt"));
