@@ -1,10 +1,21 @@
 <?php
 function preveri_okolico($grid,$i,$j){
-	if((isset($grid[$i-1][$j-1]) && !is_numeric($grid[$i-1][$j-1]) && $grid[$i-1][$j-1] != '.') || (isset($grid[$i-1][$j]) && !is_numeric($grid[$i-1][$j]) && $grid[$i-1][$j] != '.') || (isset($grid[$i-1][$j+1]) && !is_numeric($grid[$i-1][$j+1]) && $grid[$i-1][$j+1] != '.') || (isset($grid[$i][$j-1]) && !is_numeric($grid[$i][$j-1]) && $grid[$i][$j-1] != '.') || (isset($grid[$i][$j+1]) && !is_numeric($grid[$i][$j+1]) && $grid[$i][$j+1] != '.') || (isset($grid[$i+1][$j-1]) && !is_numeric($grid[$i+1][$j-1]) && $grid[$i+1][$j-1] != '.') || (isset($grid[$i+1][$j]) && !is_numeric($grid[$i+1][$j]) && $grid[$i+1][$j] != '.') || (isset($grid[$i+1][$j+1]) && !is_numeric($grid[$i+1][$j+1]) && $grid[$i+1][$j+1] != '.')){
+	if((isset($grid[$i-1][$j-1]) 
+		&& !is_numeric($grid[$i-1][$j-1]) 
+	&& $grid[$i-1][$j-1] != '.') || 
+	(isset($grid[$i-1][$j]) && !is_numeric($grid[$i-1][$j]) && $grid[$i-1][$j] != '.') || 
+	(isset($grid[$i-1][$j+1]) && !is_numeric($grid[$i-1][$j+1]) && $grid[$i-1][$j+1] != '.') || 
+	(isset($grid[$i][$j-1]) && !is_numeric($grid[$i][$j-1]) && $grid[$i][$j-1] != '.') || 
+	(isset($grid[$i][$j+1]) && !is_numeric($grid[$i][$j+1]) && $grid[$i][$j+1] != '.') || 
+	(isset($grid[$i+1][$j-1]) && !is_numeric($grid[$i+1][$j-1]) && $grid[$i+1][$j-1] != '.') || 
+	(isset($grid[$i+1][$j]) && !is_numeric($grid[$i+1][$j]) && $grid[$i+1][$j] != '.') || 
+	(isset($grid[$i+1][$j+1]) && !is_numeric($grid[$i+1][$j+1]) && $grid[$i+1][$j+1] != '.')){
 		return true;
 	}
 	return false;
 }
+
+
 
 function part1($file){
 	$lines = file($file);
@@ -64,6 +75,13 @@ function part2($file){
 	$v_procesu = false;
 	$je_v_redu = false;
 	$stevilke = array();
+	for($i = 0;$i < count($grid);$i++){
+		for($j = 0;$j < strlen($grid[$i]);$j++){
+			if($grid[$i][$j] == '*'){
+				echo "Vrstica: ".$i." Stolpec: ".$j."\n";
+			}
+		}
+	}
 	echo "Part2 resitev je: \n";
 }
 
