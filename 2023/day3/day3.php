@@ -79,6 +79,34 @@ function part2($file){
 		for($j = 0;$j < strlen($grid[$i]);$j++){
 			if($grid[$i][$j] == '*'){
 				echo "Vrstica: ".$i." Stolpec: ".$j."\n";
+				// upper left corner
+				if($i == 0 && $j == 0){
+					
+				// upper right corner
+				} else if($i == 0 && $j == (strlen($grid[$i] - 1))){
+					
+				// lower left corner 
+				} else if($i == (count($grid) - 1) && $j == 0){
+					
+				// lower right corner
+				} else if($i == (count($grid) - 1) && $j == (strlen($grid[$i]) - 1)){
+					
+				// anywhere on the top row
+				} else if($i == 0){
+					
+				// anywhere on the first (left) column
+				} else if($j == 0){
+					
+				// anywhere on the bottom row
+				} else if($i == (count($grid) - 1)){
+				
+				// anywhere on the last (right) column
+				} else if($j == (strlen($grid[$i]) - 1)){
+				
+				// anywhere in the middle
+				} else {
+					
+				}
 			}
 		}
 	}
