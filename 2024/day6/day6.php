@@ -1,6 +1,6 @@
 <?php
 
-
+// function for initialization and construction of the grid from input file
 function init($file,&$current_i,&$current_j,&$i_change,&$j_change){
 	$lines = file($file);
 	$grid = array();
@@ -52,7 +52,6 @@ function init($file,&$current_i,&$current_j,&$i_change,&$j_change){
 function part1($grid,&$positions,&$positions1,$current_i,$current_j,$i_change,$j_change){
 	$vsota = 0;
 	$positions = array();
-	//echo "current i: $current_i, current j: $current_j, change in i: $i_change, change in j: $j_change \n";
 	while(isset($grid[$current_i+$i_change][$current_j+$j_change])){
 		array_push($positions1,$current_i.",".$current_j.",".$i_change.",".$j_change);
 		if(isset($positions[$current_i.",".$current_j])){
@@ -81,7 +80,6 @@ function part1($grid,&$positions,&$positions1,$current_i,$current_j,$i_change,$j
 		}
 		$current_i += $i_change;
 		$current_j += $j_change;
-		//echo "curI: $current_i, curJ: $current_j, chI: $i_change, chJ: $j_change \n";
 	}
 	$positions[$current_i.",".$current_j] = 1;
 	array_push($positions1,$current_i.",".$current_j.",".$i_change.",".$j_change);
@@ -109,15 +107,11 @@ function part2($grid,$positions,$current_i,$current_j,$i_change,$j_change){
 
 function cycle($grid,$current_i,$current_j,$i_change,$j_change){
 	$positions = array();
-	//$positions[$current_i][$current_j][$i_change][$j_change] = 1;
-	//echo "current i: $current_i, current j: $current_j, change in i: $i_change, change in j: $j_change \n";
 	while(isset($grid[$current_i][$current_j])){
 		$position_key = "$current_i,$current_j,$i_change,$j_change";
 		if(isset($positions[$position_key])){
-			//$positions[$current_i][$current_j] = 1;
 			return true;
 		}
-			//$positions[$current_i] = array();
 		$positions[$position_key] = 1;
 		$counter = 0;
 		while(isset($grid[$current_i+$i_change][$current_j+$j_change]) && $grid[$current_i+$i_change][$current_j+$j_change] == "#" && $counter < 4){
@@ -141,9 +135,7 @@ function cycle($grid,$current_i,$current_j,$i_change,$j_change){
 		
 		$current_i += $i_change;
 		$current_j += $j_change;
-		//echo "curI: $current_i, curJ: $current_j, chI: $i_change, chJ: $j_change \n"; 
 	}
-	//var_dump($positions);
 	return false;
 	
 }
@@ -161,8 +153,4 @@ echo ($time_elapsed_secs = microtime(true) - $start)."\n";
 $start = microtime(true);
 part2($grid,$positions1,$current_i,$current_j,$i_change,$j_change);
 echo ($time_elapsed_secs = microtime(true) - $start)."\n";
-
-/*foreach($positions as $pos){
-	echo count($pos)."\n";
-}*/
 ?>
