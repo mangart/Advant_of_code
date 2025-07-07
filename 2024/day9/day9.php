@@ -3,117 +3,77 @@
 // function for initialization and construction of the grid from input file
 function init($file){
 	$lines = file($file);
-	$grid = array();
+	$disk = array();
 	foreach($lines as $line) {
 		$line = trim($line);
-		$line = str_split($line);
-		array_push($grid,$line);
+		$disk = str_split($line);
 	}
-
-	return $grid;	
+	return $disk;	
 }
 
-function part1($grid,&$antenas){
-	$antenas = array();
-	$antinodes = array();
-	$maxY = count($grid);
-	$maxX = count($grid[0]);
-	// getting antenas positions
-	for($i = 0;$i < $maxY;$i++){
-		for($j = 0;$j < $maxX;$j++){
-			if($grid[$i][$j] != "."){
-				if(isset($antenas[$grid[$i][$j]])){
-					array_push($antenas[$grid[$i][$j]],array($j,$i));
-				} else {
-					$antenas[$grid[$i][$j]] = array(array($j,$i));
-				}
-			}
+function izpisi_tabelo($disk){
+	for($i = 0;$i < count($disk);$i++){
+		if($disk[$i] != "."){
+			echo "|$disk[$i]|";
+		} else {
+			echo "$disk[$i]";
 		}
 	}
-	// getting antinodes positions 
-	foreach($antenas as $key => $ant){
-		for($i = 0;$i < count($ant);$i++){
-			$x1 = $ant[$i][0];
-			$y1 = $ant[$i][1];
-			for($j = $i+1; $j < count($ant);$j++){
-				$x2 = $ant[$j][0];
-				$y2 = $ant[$j][1];
-				$difx = $x1 - $x2;
-				$dify = $y1 - $y2;
-				$antix1 = $x1 + $difx;
-				$antiy1 = $y1 + $dify;
-				$antix2 = $x2 - $difx;
-				$antiy2 = $y2 - $dify;
-				if($antix1 >= 0 && $antix1 < $maxX && $antiy1 >= 0 && $antiy1 < $maxY){
-					$antinodes[$antix1.":".$antiy1] = 1;
-				}
-				if($antix2 >= 0 && $antix2 < $maxX && $antiy2 >= 0 && $antiy2 < $maxY){
-					$antinodes[$antix2.":".$antiy2] = 1;
-				}
-			}
+	echo "\n";
+}
+function part1($disk){
+	$array_disk = array();
+	$id = 0;
+	for($i = 0;$i < count($disk);$i++){
+		if($i % 2  == 0){
+			$array1 = array_fill(0,$disk[$i],$id);
+			$array_disk = array_merge($array_disk,$array1);
+			$id += 1;
+		} else {
+			$array1 = array_fill(0,$disk[$i],".");
+			$array_disk = array_merge($array_disk,$array1);
 		}
 	}
-	echo "Unique antinode positions are: ".count($antinodes)."\n";
+
+	$front = 0;
+	$back = count($array_disk) - 1;
+	while($front < $back){
+		if($array_disk[$back] == "."){
+			$back -= 1;
+		}
+		if($array_disk[$front] != "."){
+			$front += 1;
+		}
+		if($array_disk[$back] != "." && $array_disk[$front] == "."){
+			$array_disk[$front] = $array_disk[$back];
+			$array_disk[$back] = ".";
+		}
+	}
+
+	$vsota = 0;
+	for($i = 0;$i < count($array_disk);$i++){
+		if($array_disk[$i] == "."){
+			break;
+		}
+		$vsota += $array_disk[$i] * $i;
+	}
+	return $vsota;
 }
 
 
 
-function part2($grid,$antenas){
-	$antinodes = array();
-	$maxY = count($grid);
-	$maxX = count($grid[0]);
-	// getting antinodes positions
-	foreach($antenas as $key => $ant){
-		for($i = 0;$i < count($ant);$i++){
-			$x1 = $ant[$i][0];
-			$y1 = $ant[$i][1];
-			if(!isset($antinodes[$x1.":".$y1])){
-				$antinodes[$x1.":".$y1] = 1;
-			}
-			for($j = $i+1; $j < count($ant);$j++){
-				$x2 = $ant[$j][0];
-				$y2 = $ant[$j][1];
-				if(!isset($antinodes[$x2.":".$y2])){
-					$antinodes[$x2.":".$y2] = 1;
-				}
-				$difx = $x1 - $x2;
-				$dify = $y1 - $y2;
-				$antix1 = $x1 + $difx;
-				$antiy1 = $y1 + $dify;
-				$antix2 = $x2 - $difx;
-				$antiy2 = $y2 - $dify;
-				if($antix1 >= 0 && $antix1 < $maxX && $antiy1 >= 0 && $antiy1 < $maxY){
-					$antinodes[$antix1.":".$antiy1] = 1;
-				}
-				if($antix2 >= 0 && $antix2 < $maxX && $antiy2 >= 0 && $antiy2 < $maxY){
-					$antinodes[$antix2.":".$antiy2] = 1;
-				}
-				// getting antinode positions that are on the grid for a set of points
-				while(($antix1 >= 0 && $antix1 < $maxX && $antiy1 >= 0 && $antiy1 < $maxY) || ($antix2 >= 0 && $antix2 < $maxX && $antiy2 >= 0 && $antiy2 < $maxY)){
-					$antix1 = $antix1 + $difx;
-					$antiy1 = $antiy1 + $dify;
-					$antix2 = $antix2 - $difx;
-					$antiy2 = $antiy2 - $dify;
-					if($antix1 >= 0 && $antix1 < $maxX && $antiy1 >= 0 && $antiy1 < $maxY){
-						$antinodes[$antix1.":".$antiy1] = 1;
-					}
-					if($antix2 >= 0 && $antix2 < $maxX && $antiy2 >= 0 && $antiy2 < $maxY){
-						$antinodes[$antix2.":".$antiy2] = 1;
-					}					
-				}
-			}
-		}
-	}
-	echo "Unique antinode positions are: ".count($antinodes)."\n";
+function part2($disk){
+
+				
 }
 
 
 $antenas = array();
 $start = microtime(true);
-$grid = init('day8_input.txt');
-part1($grid,$antenas);
+$disk = init('day9_input.txt');
+echo "The checksum is: ".part1($disk)."\n";
 echo ($time_elapsed_secs = microtime(true) - $start)."\n";
 $start = microtime(true);
-part2($grid,$antenas);
+part2($disk);
 echo ($time_elapsed_secs = microtime(true) - $start)."\n";
 ?>
