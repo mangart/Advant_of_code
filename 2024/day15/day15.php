@@ -23,6 +23,31 @@ function init($file,&$grid,&$instr){
 	}
 }
 
+function scaleGrid($grid){
+	$gridNew = array();
+	for($i = 0;$i < count($grid);$i++){
+		$line = array();
+		for($j = 0;$j < count($grid[$i]);$j++){
+			if($grid[$i][$j] == "#"){
+				array_push($line,"#");
+				array_push($line,"#");
+			} else if($grid[$i][$j] == "."){
+				array_push($line,".");
+				array_push($line,".");
+			} else if($grid[$i][$j] == "O"){
+				array_push($line,"[");
+				array_push($line,"]");
+				
+			} else if($grid[$i][$j] == "@"){
+				array_push($line,"@");
+				array_push($line,".");
+			}
+		}
+		array_push($gridNew,$line);
+	}
+	return $gridNew;
+}
+
 function findRobot($grid){
 	$pos = array();
 	for($i = 0;$i <count($grid);$i++){
@@ -47,7 +72,12 @@ function getChange($direction,&$iChange,&$jChange){
 	}
 }
 
+
+
 function makeMove(&$grid,$i,$j,$iChange,$jChange){
+	if($iChange == 0 && $jChange == 0){
+		return false;
+	}
 	if(!isset($grid[$i+$iChange][$j+$jChange]) || $grid[$i+$iChange][$j+$jChange] == "#"){
 		return false;
 	}
@@ -66,6 +96,67 @@ function makeMove(&$grid,$i,$j,$iChange,$jChange){
 	}
 }
 
+function checkMove($grid,$i,$j,$iChange,$jChange){
+	if($iChange == 0 && $jChange == 0){
+		return false;
+	}
+	if(!isset($grid[$i+$iChange][$j+$jChange]) || $grid[$i+$iChange][$j+$jChange] == "#"){
+		return false;
+	}
+	if($grid[$i+$iChange][$j+$jChange] == "."){
+		return true;
+	}
+	if($grid[$i+$iChange][$j+$jChange] == "["){
+		if($iChange != 0 && $jChange == 0){
+			if(!checkMove($grid,$i+$iChange,$j+1,$iChange,$jChange)) return false;
+			if(!checkMove($grid,$i+$iChange,$j,$iChange,$jChange)) return false;
+		}
+	}
+	if($grid[$i+$iChange][$j+$jChange] == "]"){
+		if($iChange != 0 && $jChange == 0){
+			if(!checkMove($grid,$i+$iChange,$j-1,$iChange,$jChange)) return false;
+			if(!checkMove($grid,$i+$iChange,$j,$iChange,$jChange)) return false;
+		}
+	}
+	return true;
+}
+
+
+
+
+function makeMovePart2(&$grid,$i,$j,$iChange,$jChange){
+	if($iChange == 0 && $jChange == 0){
+		return false;
+	}
+	if(!isset($grid[$i+$iChange][$j+$jChange]) || $grid[$i+$iChange][$j+$jChange] == "#"){
+		return false;
+	}
+	if($grid[$i+$iChange][$j+$jChange] == "."){
+		$temp = $grid[$i+$iChange][$j+$jChange];
+		$grid[$i+$iChange][$j+$jChange] = $grid[$i][$j];
+		$grid[$i][$j] = $temp;
+		return true;
+	}
+	if($grid[$i+$iChange][$j+$jChange] == "["){
+		makeMovePart2($grid,$i+$iChange,$j+$jChange+1,$iChange,$jChange);
+		makeMovePart2($grid,$i+$iChange,$j+$jChange,$iChange,$jChange);
+		$temp = $grid[$i+$iChange][$j+$jChange];
+		$grid[$i+$iChange][$j+$jChange] = $grid[$i][$j];
+		$grid[$i][$j] = $temp;
+		return true;
+		
+	}
+	
+	if($grid[$i+$iChange][$j+$jChange] == "]"){
+		makeMovePart2($grid,$i+$iChange,$j+$jChange-1,$iChange,$jChange);
+		makeMovePart2($grid,$i+$iChange,$j+$jChange,$iChange,$jChange);
+		$temp = $grid[$i+$iChange][$j+$jChange];
+		$grid[$i+$iChange][$j+$jChange] = $grid[$i][$j];
+		$grid[$i][$j] = $temp;
+		return true;
+	}
+	return false;
+}
 
 function part1($grid,$instr){
 	$pos = findRobot($grid);
@@ -94,8 +185,38 @@ function part1($grid,$instr){
 }
 
 function part2($grid,$instr){
-
-	
+	$pos = findRobot($grid);
+	$i = $pos[0];
+	$j = $pos[1];
+	$direction = 0;
+	foreach($instr as $ins){
+		$iChange = 0;
+		$jChange = 0;
+		getChange($ins,$iChange,$jChange);
+		if($jChange != 0){
+			$move = makeMove($grid,$i,$j,$iChange,$jChange);
+			if($move){
+				$i = $i + $iChange;
+				$j = $j + $jChange;
+			}
+		} else {
+			$move = checkMove($grid,$i,$j,$iChange,$jChange);
+			if($move){
+				makeMovePart2($grid,$i,$j,$iChange,$jChange);
+				$i = $i + $iChange;
+				$j = $j + $jChange;
+			}
+		}
+	}
+	$vsota = 0;
+	for($i = 0;$i < count($grid);$i++){
+		for($j = 0;$j < count($grid[$i]);$j++){
+			if($grid[$i][$j] == "["){
+				$vsota += 100 * $i + $j;
+			}
+		}
+	}
+	return $vsota;
 }
 
 
@@ -107,6 +228,7 @@ $start = microtime(true);
 echo "The checksum is: ".part1($grid,$instr)."\n";
 echo ($time_elapsed_secs = microtime(true) - $start)."\n";
 
+$grid = scaleGrid($grid);
 $start = microtime(true);
 echo "The checksum is: ".part2($grid,$instr)."\n";
 echo ($time_elapsed_secs = microtime(true) - $start)."\n";
