@@ -3,7 +3,6 @@
 // function for initialization and construction of the grid from input file
 function init($file,&$grid){
 	$lines = file($file);
-	$phase = 0;
 	foreach($lines as $line) {
 		$line = trim($line);
 		$line = str_split($line);
