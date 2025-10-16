@@ -11,7 +11,7 @@ function init($file,&$grid){
 	}
 }
 
-function get_counts($grid,&$counts,&$start,&$end){
+function get_counts($grid,&$counts,&$start,&$end,&$counts1,&$start1,&$end1){
 	for($i = 0;$i < count($grid);$i++){
 		for($j = 0;$j < count($grid[$i]);$j++){
 			if($grid[$i][$j] != '#'){
@@ -22,6 +22,13 @@ function get_counts($grid,&$counts,&$start,&$end){
 					$temp['direction'] = "E";
 					$counts[$i.":".$j] = $temp;
 					$start = $i.":".$j;
+					$end1 = $i.":".$j;
+					$temp = array();
+					$temp['dist'] = INF;
+					$temp['visited'] = false;
+					$temp['direction'] = "";
+					$counts1[$i.":".$j] = $temp;
+					
 				} else {
 					$temp = array();
 					$temp['dist'] = INF;
@@ -30,6 +37,14 @@ function get_counts($grid,&$counts,&$start,&$end){
 					$counts[$i.":".$j] = $temp;
 					if($grid[$i][$j] == "E"){
 						$end = $i.":".$j;
+						$start1 = $i.":".$j;
+						$temp1 = array();
+						$temp1['dist'] = 0;
+						$temp1['visited'] = false;
+						$temp1['direction'] = "S";
+						$counts1[$i.":".$j] = $temp1;
+					} else {
+						$counts1[$i.":".$j] = $temp;
 					}
 				}
 			}
@@ -89,12 +104,11 @@ function get_costs($direction){
 	array_push($turns,$current);
 	return $turns;
 }
-function part1($grid){
-	$counts = array();
+function part1($grid,&$counts,&$start,&$end,&$counts1,&$start1,&$end1){
 	$start = "";
 	$end = "";
 	$queue = new SplPriorityQueue();
-	get_counts($grid,$counts,$start,$end);
+	get_counts($grid,$counts,$start,$end,$counts1,$start1,$end1);
 	$queue->insert($start,-$counts[$start]['dist']);
 	while(!$queue->isEmpty()){
 		$elementKey = $queue->extract();
@@ -126,23 +140,66 @@ function part1($grid){
 	return $counts[$end]['dist'];
 }
 
-function part2($grid){
 
-	return;
+function part2($grid,&$counts,&$start,&$end,&$counts1,&$start1,&$end1,$dist){
+	$queue = new SplPriorityQueue();
+	$queue->insert($start1,-$counts1[$start1]['dist']);
+	while(!$queue->isEmpty()){
+		$elementKey = $queue->extract();
+		$counts1[$elementKey]['visited'] = true;
+		$element = $counts1[$elementKey];
+		$costs = get_costs($element['direction']);
+		$deli = array_map("intval",explode(":",$elementKey));
+		$origI = $deli[0];
+		$origJ = $deli[1];
+		foreach($costs as $cost){
+			$i = 0;
+			$j = 0;
+			get_direction($cost['dir'],$i,$j);
+			$newI = $origI + $i;
+			$newJ = $origJ + $j;
+			$stringKey = $newI.":".$newJ;
+			$newCost = $element['dist'] + $cost['cost'];
+			if(isset($counts1[$stringKey])){
+				if($counts1[$stringKey]['dist'] == INF || $counts1[$stringKey]['dist'] > $newCost){
+					$counts1[$stringKey]['dist'] = $newCost;
+					$counts1[$stringKey]['direction'] = $cost['dir'];
+				}
+				if(!$counts1[$stringKey]['visited']){
+					$queue->insert($stringKey,-$counts1[$stringKey]['dist']);
+				}
+			}
+		}	
+	}
+	$counter = 0;
+	foreach($counts1 as $key => $value){
+		if(($counts[$key]['dist'] + $counts1[$key]['dist']) <= $dist){
+			$counter += 1;
+		}
+	}
+	return $counter;	
 }
 
 
 
 
 $grid = array();
+$counts = array();
+$counts1 = array();
+$start = "";
+$end = "";
+$start1 = "";
+$end1 = "";
 init('day16_input.txt',$grid);
 
 
-$start = microtime(true);
-echo "The checksum is: ".part1($grid)."\n";
-echo ($time_elapsed_secs = microtime(true) - $start)."\n";
+$srt = microtime(true);
+$dist = part1($grid,$counts,$start,$end,$counts1,$start1,$end1);
+echo "The checksum is: ".$dist."\n";
+echo ($time_elapsed_secs = microtime(true) - $srt)."\n";
+//var_dump($counts);
+$srt = microtime(true);
+echo "The checksum is: ".part2($grid,$counts,$start,$end,$counts1,$start1,$end1,$dist)."\n";
+echo ($time_elapsed_secs = microtime(true) - $srt)."\n";
 
-$start = microtime(true);
-echo "The checksum is: ".part2($grid)."\n";
-echo ($time_elapsed_secs = microtime(true) - $start)."\n";
 ?>
