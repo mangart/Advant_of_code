@@ -59,9 +59,10 @@ function part1($grid,$gridSize){
 
 function part2($grid,$cords,$gridSize,$simBytes){
 	for($i = $simBytes;$i < count($cords);$i++){
-		part1SetUp($grid,$cords,$i);
+		$xy = array_map("intval", explode(",", $cords[$i]));
+		$grid[$xy[1]][$xy[0]] = "#";
 		if(!part1($grid,$gridSize)){
-			return $cords[$i-1];
+			return $cords[$i];
 		}
 	}
 	return -1;
