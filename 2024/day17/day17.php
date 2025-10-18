@@ -86,33 +86,39 @@ function part1($regA,$regB,$regC,$prog){
 	return implode(",",$out);
 }
 
+function loop($regA,$regB,$regC,$prog){
+	$ptr = 0;
+	$out = array();
+	$length = count($prog);
+	while($ptr < $length){
+		$opt = $prog[$ptr];
+		$operand = $prog[$ptr+1];
+		$inc = doMove($opt,$operand,$regA,$regB,$regC,$ptr,$out);
+		if($inc){
+			$ptr += 2;
+		}
+	}
+	return $out;
+}
 
-function part2($regA,$regB,$regC,$prog,$proStr){
-	$initRegB = $regB;
-	$initRegC = $regC;
-	$i = 0;
-	while(true){
-		$ptr = 0;
-		$out = array();
-		$regA = $i;
-		$regB = $initRegB;
-		$regC = $initRegC;
-		$length = count($prog);
-		while($ptr < $length){
-			$opt = $prog[$ptr];
-			$operand = $prog[$ptr+1];
-			$inc = doMove($opt,$operand,$regA,$regB,$regC,$ptr,$out);
-			if($inc){
-				$ptr += 2;
-			}
+function getSmallest($regA,$regB,$regC,$prog,$itr,&$nums){
+	if($itr == count($prog)){
+		array_push($nums,intdiv($regA,8));
+		return true;
+	}
+	for($i = 0;$i < 8;$i++){
+		$curnum = $regA + $i;
+		$out = loop($curnum,$regB,$regC,$prog);
+		if($out[0] == $prog[count($prog) - $itr - 1]){
+			getSmallest($curnum * 8,$regB,$regC,$prog,$itr + 1,$nums);
 		}
-		$output = implode(",",$out);
-		if(trim($output) == trim($proStr)){
-			echo "Output: $output ProStr: $proStr \n";
-			return $i;
-		}
-		$i++;
-	}	
+	}
+}
+
+function part2($regA,$regB,$regC,$prog){
+		$nums = array();
+		getSmallest(0,$regB,$regC,$prog,0,$nums);
+		return min($nums);
 }
 
 
@@ -129,7 +135,7 @@ echo "The checksum is: ".part1($regs[0],$regs[1],$regs[2],$prog)."\n";
 echo ($time_elapsed_secs = microtime(true) - $srt)."\n";
 
 $srt = microtime(true);
-echo "The checksum is: ".part2($regs[0],$regs[1],$regs[2],$prog,$proStr)."\n";
+echo "The checksum is: ".part2($regs[0],$regs[1],$regs[2],$prog)."\n";
 echo ($time_elapsed_secs = microtime(true) - $srt)."\n";
 
 ?>
