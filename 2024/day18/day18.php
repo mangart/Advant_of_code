@@ -58,7 +58,7 @@ function part1($grid,$gridSize){
 
 
 function part2($grid,$cords,$gridSize,$simBytes){
-	for($i = $simBytes;$i < count($cords);$i++){
+	for($i = $simBytes+1;$i < count($cords);$i++){
 		$xy = array_map("intval", explode(",", $cords[$i]));
 		$grid[$xy[1]][$xy[0]] = "#";
 		if(!part1($grid,$gridSize)){
@@ -78,16 +78,10 @@ $gridSize = 71;
 $simBytes = 1024;
 init('day18_input.txt',$gridSize,$grid,$cords);
 
-//var_dump($cords);
+
 
 part1SetUp($grid,$cords,$simBytes);
-/*
-for($i = 0;$i < count($grid);$i++){
-	for($j = 0;$j < count($grid[$i]);$j++){
-		echo $grid[$i][$j];
-	}
-	echo "\n";
-}*/
+
 
 
 $srt = microtime(true);
