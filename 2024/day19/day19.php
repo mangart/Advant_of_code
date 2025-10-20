@@ -23,17 +23,14 @@ function init($file, &$patterns, &$wants) {
 // calculate way to construct a design
 function makeDesign($patterns,$want,$pos,&$memo) {
     $n = strlen($want);
-
 	// return 1 if we reach the end of the string
     if($pos == $n){
 		return 1;
 	}
-
     // if the count for the length is already computed we return it
     if(isset($memo[$pos])){
 		return $memo[$pos];
 	}
-
     $count = 0;
     foreach ($patterns as $pattern) {
         $len = strlen($pattern);
@@ -41,7 +38,6 @@ function makeDesign($patterns,$want,$pos,&$memo) {
             $count += makeDesign($patterns, $want, $pos + $len, $memo);
         }
     }
-
     $memo[$pos] = $count;
     return $count;
 }
