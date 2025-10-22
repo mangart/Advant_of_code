@@ -11,7 +11,7 @@ function init($file, &$grid) {
     }
 }
 
-function getPath($grid,&$start,&$end,&$path,&$reversePath){
+function getPath($grid,&$start,&$path,&$reversePath){
 	for($i = 0;$i < count($grid);$i++){
 		for($j = 0;$j < count($grid[$i]);$j++){
 			if($grid[$i][$j] == "S"){
@@ -71,13 +71,52 @@ function getPath($grid,&$start,&$end,&$path,&$reversePath){
 
 
 
-function part1($grid,$start,$end) {
+function part1($grid,$start,$minCost) {
 	$path = array();
 	$reversePath = array();
-	getPath($grid,$start,$end,$path,$reversePath);
-	
-		
-	
+	$numPaths = 0;
+	getPath($grid,$start,$path,$reversePath);
+	for($i = 0;$i < count($path);$i++){
+		$origI = $path[$i]["i"];
+		$origJ = $path[$i]["j"];
+		// north coordinates
+		$iN = $origI - 2;
+		$jN = $origJ;
+		// east coordinates
+		$iE = $origI;
+		$jE = $origJ + 2;
+		// south coordinates
+		$iS = $origI + 2;
+		$jS = $origJ;
+		// west coordinates
+		$iW = $origI;
+		$jW = $origJ - 2;
+		if(isset($reversePath[$iN][$jN]) && $reversePath[$origI][$origJ] < $reversePath[$iN][$jN]){
+			$cost = $reversePath[$iN][$jN] - ($reversePath[$origI][$origJ] + 2);
+			if($cost >= $minCost){
+				$numPaths += 1;
+			}
+		}
+		if(isset($reversePath[$iE][$jE]) && $reversePath[$origI][$origJ] < $reversePath[$iE][$jE]){
+			$cost = $reversePath[$iE][$jE] - ($reversePath[$origI][$origJ] + 2);
+			if($cost >= $minCost){
+				$numPaths += 1;
+			}			
+		}
+		if(isset($reversePath[$iS][$jS]) && $reversePath[$origI][$origJ] < $reversePath[$iS][$jS]){
+			$cost = $reversePath[$iS][$jS] - ($reversePath[$origI][$origJ] + 2);
+			if($cost >= $minCost){
+				$numPaths += 1;
+			}			
+		}
+		if(isset($reversePath[$iW][$jW]) && $reversePath[$origI][$origJ] < $reversePath[$iW][$jW]){
+			$cost = $reversePath[$iW][$jW] - ($reversePath[$origI][$origJ] + 2);
+			if($cost >= $minCost){
+				$numPaths += 1;
+			}			
+		}
+	}
+	return $numPaths;
 }
 
 function part2(){
@@ -86,12 +125,12 @@ function part2(){
 
 $grid = array();
 $start = "";
-$end = "";
-init('day20_sample_input.txt', $grid);
+$minCost = 100;
+init('day20_input.txt', $grid);
 
 $valid = [];
 $srt = microtime(true);
-echo "The checksum is: " . part1($grid,$start,$end) . "\n";
+echo "The checksum is: " . part1($grid,$start,$minCost) . "\n";
 echo (microtime(true) - $srt) . " seconds\n";
 
 $srt = microtime(true);
