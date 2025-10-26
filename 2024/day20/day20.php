@@ -71,9 +71,7 @@ function getPath($grid,&$start,&$path,&$reversePath){
 
 
 
-function part1($grid,$start,$minCost) {
-	$path = array();
-	$reversePath = array();
+function part1($grid,&$start,$minCost,&$path,&$reversePath) {
 	$numPaths = 0;
 	getPath($grid,$start,$path,$reversePath);
 	for($i = 0;$i < count($path);$i++){
@@ -119,22 +117,68 @@ function part1($grid,$start,$minCost) {
 	return $numPaths;
 }
 
-function part2(){
+function getManhattanPoints($start,$radius){
+	$deli = array_map("intval",explode(":",$start));
+	$x0 = $deli[1];
+	$y0 = $deli[0];
+	$points = array();
+	for($i = -$radius;$i < $radius + 1;$i++){
+		# The allowed |dy| range shrinks as |dx| increases
+		$max_dy = $radius - abs($i);
+		for($j = -$max_dy;$j < $max_dy + 1;$j++){ 
+			array_push($points,array($x0 + $i,$y0 + $j));
+		}
+	}
+	echo "Tocke: ".count($points)."\n";
+	return $points;
+}
 
+function manhattanDistance($x0,$x1,$y0,$y1){
+	return abs($x1-$x0) + abs($y1-$y0);
+}
+function part2($grid,$start,$minCost,$radius,$path,$reversePath){
+	$pathLength = count($path);
+	$vsota = 0;
+	for($k = 0;$k < $pathLength - 100;$k++){
+		$deli = array_map("intval",explode(":",$start));
+		$x0 = $path[$k]["j"];
+		$y0 = $path[$k]["i"];
+		for($i = -$radius;$i < $radius + 1;$i++){
+			# The allowed |dy| range shrinks as |dx| increases
+			$max_dy = $radius - abs($i);
+			for($j = -$max_dy;$j < $max_dy + 1;$j++){ 
+				$j1 = $x0 + $i;
+				$i1 = $y0 + $j;
+				if(isset($reversePath[$i1][$j1]) && $reversePath[$i1][$j1] > $reversePath[$y0][$x0]){
+					$cost = manhattanDistance($y0,$i1,$x0,$j1);
+					$savedCost = $reversePath[$i1][$j1] - ($reversePath[$y0][$x0] + $cost);
+					if($savedCost >= $minCost){
+						$vsota += 1;
+					}
+				}
+			}
+		}
+	}
+	return $vsota;
 }
 
 $grid = array();
+$path = array();
+$reversePath = array();
 $start = "";
 $minCost = 100;
-init('day20_input.txt', $grid);
+$radius = 20;
 
-$valid = [];
-$srt = microtime(true);
-echo "The checksum is: " . part1($grid,$start,$minCost) . "\n";
-echo (microtime(true) - $srt) . " seconds\n";
+init('day20_input.txt',$grid);
+
 
 $srt = microtime(true);
-echo "The checksum is: " . part2() . "\n";
-echo (microtime(true) - $srt) . " seconds\n";
+echo "The checksum is: ".part1($grid,$start,$minCost,$path,$reversePath)."\n";
+echo (microtime(true) - $srt)." seconds\n";
+
+
+$srt = microtime(true);
+echo "The checksum is: ".part2($grid,$start,$minCost,$radius,$path,$reversePath)."\n";
+echo (microtime(true) - $srt)." seconds\n";
 
 ?>
