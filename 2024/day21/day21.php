@@ -49,6 +49,25 @@ function createGlobalSequences($globalSequences,$sequences){
 	return $newSequences;
 }
 
+function getNumericalSequence(&$globalSequences,$code,$gapI,$gapJ,$numerical,$currI,$currJ){
+	$len = strlen($code);
+	for($i = 0;$i < $len;$i++){
+		$sequences = array();
+		$current = $code[$i];
+		$whereTo = $numerical[$current];
+		$whereToI = intdiv($whereTo,10);
+		$whereToJ = $whereTo % 10;
+		getSequence($whereToI,$whereToJ,$currI,$currJ,$gapI,$gapJ,$sequences,"");
+		$currI = $whereToI;
+		$currJ = $whereToJ;
+		//echo "Trenutni znak: $current \n";
+		//var_dump($sequences);
+		$globalSequences = createGlobalSequences($globalSequences,$sequences);
+		$sequences = array();	
+	}
+	
+}
+
 function part1($codes,$numerical,$directional) {
 	// gap index mapping for the numerical and directional keypad
 	$numGap = 30;
@@ -63,8 +82,12 @@ function part1($codes,$numerical,$directional) {
 		echo "Koda $code \n";
 		$currI = intdiv($numCurr,10);
 		$currJ = $numCurr % 10;
-		$len = strlen($code);
-		
+		//$len = strlen($code);
+		getNumericalSequence($globalSequences,$code,$gapI,$gapJ,$numerical,$currI,$currJ);
+		echo "Sekvence za kodo: $code \n";
+		var_dump($globalSequences);
+	}
+	/*
 		for($i = 0;$i < $len;$i++){
 			$sequences = array();
 			$current = $code[$i];
@@ -82,7 +105,7 @@ function part1($codes,$numerical,$directional) {
 		}
 		echo "Sekvence za kodo: $code \n";
 		var_dump($globalSequences);
-	}
+	}*/
 }
 
 function part2($codes){
