@@ -17,9 +17,6 @@ function init($file) {
 	return $intervals;
 }
 
-
-
-
 function part1($intervals) {
 	$vsota = 0;
 	//var_dump($intervals);
@@ -49,45 +46,36 @@ function part1($intervals) {
 
 }
 
-
-
 function part2($intervals){
-	$vsota = 0;
-	foreach($intervals as $interval){
-		$beg = intval($interval["begin"]);
-		$end = intval($interval["end"]);
-		for($i = $beg;$i <= $end;$i++){
-			$string = strval($i);
-			$dolzina = strlen($string);
-			for($delcki = 1;$delcki <= $dolzina;$delcki++){
-				if ($dolzina % $delcki !== 0) {
-					continue; 
-				}
-				$chunks = str_split($string, $delcki);
-				if (count($chunks) < 2){
-					continue;
-				}
-				if(count(array_unique($chunks)) === 1){
-					$vsota += $i;
-					break;
-				}
-			}
-		}
-	}
-	return $vsota;
+    $vsota = 0;
+	// going through the intervals 
+    foreach($intervals as $interval){
+        $beg = intval($interval["begin"]);
+        $end = intval($interval["end"]);
+		//iterating through the interval 
+        for($i = $beg; $i <= $end; $i++){
+            $string = strval($i);
+            $dolzina = strlen($string);
+
+            // // chcking for substring that are les or equal to the half of the string length
+            for ($delcki = 1; $delcki * 2 <= $dolzina; $delcki++){
+				// if the length of a string does not match the length of the string we skip it;
+                if ($dolzina % $delcki !== 0) continue;
+
+                // we get a substing of length n and repeat it n times and check if it matches the string
+				// if it does we add it to the total 
+                $chunk = substr($string, 0, $delcki);
+                if (str_repeat($chunk, $dolzina / $delcki) === $string){
+                    $vsota += $i;
+                    break;
+                }
+            }
+        }
+    }
+    return $vsota;
 }
 
-
-
-
-
-
-
-
 $intervals = init('day2_input.txt');
-
-
-
 
 $srt = microtime(true);
 echo "The checksum is: ".part1($intervals)."\n";
