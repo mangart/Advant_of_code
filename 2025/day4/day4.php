@@ -91,7 +91,6 @@ function removeRolls(&$grid){
 	return $vsota;
 }
 
-
 function part2($grid){
 	$vsota = 0;
 	// we increment the sum of removable bales ('@' symbols) until any more bales can be removed
@@ -103,14 +102,11 @@ function part2($grid){
 
 $grid = init('day4_input.txt');
 
-
 $srt = microtime(true);
 echo "The checksum for part1 is: ".part1($grid)."\n";
 echo (microtime(true) - $srt)." seconds\n";
 
-
 $srt = microtime(true);
 echo "The checksum for part2 is: ".part2($grid)."\n";
 echo (microtime(true) - $srt)." seconds\n";
-
 ?>
