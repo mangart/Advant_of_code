@@ -62,7 +62,7 @@ function part2($grid){
 	return $vsota;
 }
 
-$grid = init('day7_input.txt');
+$grid = init('day7_sample_input.txt');
 
 
 $srt = microtime(true);
