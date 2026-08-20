@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 	int y = 0;
 	int dX = 0;
 	int dY = 0;
-	int sum = 0;
+	int sum = 1;  // sum is 1 because we count the initial position at the start
 	struct Koordinata *head = NULL;
 	struct Koordinata *iterator = NULL;
 	head = (struct Koordinata *)malloc(sizeof(struct Koordinata));
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	int x2 = 0;
 	int y2 = 0;
 	
-	int sum1 = 0;
+	int sum1 = 1;  // sum is 1, because we count the initial position at the start
 	struct Koordinata *head1 = NULL;
 	struct Koordinata *iterator1 = NULL;
 	head1 = (struct Koordinata *)malloc(sizeof(struct Koordinata));
@@ -113,6 +113,7 @@ int main(int argc, char *argv[]) {
 				next->count = 1;
 				next->Next = NULL;
 				iterator->Next = next;
+				sum += 1;
 				break;
 			}
 			iterator = iterator->Next;
@@ -131,6 +132,7 @@ int main(int argc, char *argv[]) {
 					next->count = 1;
 					next->Next = NULL;
 					iterator1->Next = next;
+					sum1 += 1;
 					break;
 				}
 			} else {
@@ -145,6 +147,7 @@ int main(int argc, char *argv[]) {
 					next->count = 1;
 					next->Next = NULL;
 					iterator1->Next = next;
+					sum1 += 1;
 					break;
 				}				
 			}
@@ -155,17 +158,7 @@ int main(int argc, char *argv[]) {
 		counter += 1;
 	}
 	
-	iterator = head;
-	while(iterator != NULL){
-		sum += 1;
-		iterator = iterator->Next;
-	}
-
-	iterator1 = head1;
-	while(iterator1 != NULL){
-		sum1 += 1;
-		iterator1 = iterator1->Next;
-	}    
+  
 
     printf("Part 1 result is: %d\n",sum);
     printf("Part 2 result is: %d\n",sum1);
